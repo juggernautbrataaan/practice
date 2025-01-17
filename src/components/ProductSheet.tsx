@@ -1,60 +1,63 @@
+// import { useState } from 'react';
+// import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
+// import { ProductForm } from './ProductForm';
+// import { Product, ProductCreate } from '../lib/types';
+// import { Button } from './ui/button';
+// import { api } from '../lib/api';
 
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "./ui/sheet"
-import { Product } from '../lib/products'
-import { Button } from "./ui/button"
-import { Pencil } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { ScrollArea } from "./ui/scroll-area"
-import { Badge } from "./ui/badge"
+// interface ProductSheetProps {
+//   product: Product;
+//   isOpen: boolean;
+//   onClose: () => void;
+//   onUpdate: (product: ProductCreate) => void;
+//   onDelete: (id: number) => void;
+// }
 
-interface ProductSheetProps {
-  product: Product | null
-  isOpen: boolean
-  onClose: () => void
-}
+// export function ProductSheet({ product, isOpen, onClose, onUpdate, onDelete }: ProductSheetProps) {
+//   const [isEditing, setIsEditing] = useState(false);
 
-export function ProductSheet({ product, isOpen, onClose }: ProductSheetProps) {
-  const navigate = useNavigate()
+//   const handleSubmit = (data: ProductCreate) => {
+//     onUpdate({ ...data, id: product.id });
+//     setIsEditing(false);
+//   };
 
-  if (!product) return null
+//   const handleDelete = () => {
+//     onDelete(product.id);
+//     onClose();
+//   };
 
-  return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-[90vw] sm:max-w-[540px]">
-        <SheetHeader className="mb-6">
-          <SheetTitle className="text-2xl">{product.name}</SheetTitle>
-          <SheetDescription>Детали товара</SheetDescription>
-        </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          <div className="space-y-6">
-            <div className="aspect-square w-full relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover rounded-md"
-              />
-            </div>
-            <div>
-              {/* <Badge variant="secondary" className="mb-2">{product.type}</Badge> */}
-              <h3 className="text-lg font-semibold mb-2">Описание</h3>
-              <p className="text-sm text-gray-600">{product.description}</p>
-            </div>
-          </div>
-        </ScrollArea>
-        <SheetFooter className="mt-6">
-          <Button 
-            onClick={() => {
-              onClose()
-              navigate(`/product/${product.id}`)
-            }}
-            className="w-full"
-          >
-            <Pencil className="mr-2 h-4 w-4" />
-            Редактировать
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
+//   return (
+//     <Sheet open={isOpen} onOpenChange={onClose}>
+//       <SheetContent className="sm:max-w-md">
+//         <SheetHeader>
+//           <SheetTitle className="text-2xl font-bold text-blue-600">{isEditing ? 'Редактирование товара' : product.name}</SheetTitle>
+//           <SheetDescription>
+//             {isEditing ? 'Измените детали товара' : 'Детали товара'}
+//           </SheetDescription>
+//         </SheetHeader>
+//         {isEditing ? (
+//           <ProductForm 
+//             product={product} 
+//             onSubmit={handleSubmit} 
+//             onDelete={handleDelete}
+//             onCancel={() => setIsEditing(false)}  
+//           />
+//         ) : (
+//           <div className="space-y-6 mt-6">
+//             <div className="relative w-full h-64 overflow-hidden rounded-lg">
+//               <img 
+//                 src={api.getImageUrl(product.id) || "/placeholder.svg"}
+//                 alt={product.name} 
+//                 className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+//               />
+//             </div>
+//             <p className="text-lg"><strong className="text-blue-600">Описание:</strong> {product.description}</p>
+//             <p className="text-lg"><strong className="text-blue-600">Тип модели:</strong> {product.modelType}</p>
+//             <Button onClick={() => setIsEditing(true)} className="w-full bg-blue-500 hover:bg-blue-600 text-white">Редактировать</Button>
+//           </div>
+//         )}
+//       </SheetContent>
+//     </Sheet>
+//   );
+// }
 

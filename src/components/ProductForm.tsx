@@ -28,6 +28,9 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
   const [angle, setAngle] = useState(90);
   const [lightEnergy, setLightEnergy] = useState(900);
   const [renderedImage, setRenderedImage] = useState<string | null>(null);
+  
+  // Состояние для отслеживания процесса рендеринга
+  const [isRendering, setIsRendering] = useState(false);
 
   const { toast } = useToast();
 
@@ -85,6 +88,8 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
       return;
     }
 
+    setIsRendering(true);  // Устанавливаем состояние загрузки в true
+
     try {
       // Передаем изображение для рендера, угол и яркость в запрос
       const imageBlob = await api.renderModel(renderImage, angle, lightEnergy);
@@ -92,6 +97,8 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
       setRenderedImage(imageUrl); // Устанавливаем изображение для отображения
     } catch (error) {
       toast({ title: "Ошибка", description: "Не удалось отрендерить модель", variant: "destructive" });
+    } finally {
+      setIsRendering(false);  // Завершаем процесс рендеринга
     }
   };
 
@@ -138,25 +145,6 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
             <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           </Label>
         </div>
-      </div>
-
-
-      <div className="flex justify-around space-x-4">
-        <div className="flex space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Отмена
-          </Button>
-          {onDelete && (
-            <Button type="button" variant="destructive" onClick={onDelete}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Удалить
-            </Button>
-          )}
-        </div>
-        <Button type="submit" className="bg-green-600 hover:bg-green-700">
-          <Save className="mr-2 h-4 w-4" />
-          Сохранить
-        </Button>
       </div>
 
       {/* Новый инпут для загрузки изображения для рендеринга */}
@@ -208,14 +196,18 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
         />
       </div>
 
-      
+      {/* Индикатор загрузки или рендеренное изображение */}
+      <div className="mt-6">
+        <Label>Рендер 3D модели:</Label>
+        {isRendering ? (
+          <div className="w-8 h-8 relative mx-auto">
+  <div class="absolute inset-0 rounded-full animate-spin border-4 border-t-blue-600 border-solid"></div>
+</div>
 
-      {renderedImage && (
-        <div className="mt-6">
-          <Label>Рендер 3D модели:</Label>
-          <img src={renderedImage} alt="Rendered Model" className="mt-2 rounded-md" />
-        </div>
-      )}
+        ) : (
+          renderedImage && <img src={renderedImage} alt="Rendered Model" className="mt-2 rounded-md" />
+        )}
+      </div>
 
       <Button type="button" onClick={handleRender} className="bg-blue-600 hover:bg-blue-700 mt-4">
         Рендерить модель

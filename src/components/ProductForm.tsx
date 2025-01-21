@@ -201,7 +201,7 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
         <Label>Рендер 3D модели:</Label>
         {isRendering ? (
           <div className="w-8 h-8 relative mx-auto">
-  <div class="absolute inset-0 rounded-full animate-spin border-4 border-t-blue-600 border-solid"></div>
+  <div className="absolute inset-0 rounded-full animate-spin border-4 border-t-blue-600 border-solid"></div>
 </div>
 
         ) : (

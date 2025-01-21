@@ -14,25 +14,21 @@ export const api = {
     return response.data
   },
 
-  createProduct(product: ProductCreate): Promise<Product> {
+  createProduct(product: ProductCreate): Promise<void> {
     const formData = new FormData();
     formData.append('name', product.name);
     formData.append('description', product.description);
-    formData.append('modeltype', product.modelType);
+    formData.append('modeltype', product.modelType);  // Исправлено на 'modeltype'
     if (product.image) formData.append('image', product.image);
   
-    return fetch(`${API_URL}/products/products`, {
-      method: 'POST',
-      body: formData,
+    return axios.post(`${API_URL}/Products/products`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to create product');
-        }
-        return response.json(); // Возвращаем промис с продуктом
+      .then(() => {
+        // Ничего не возвращаем, просто подтверждаем успешное выполнение
       })
-      .then((createdProduct: Product) => {
-        return createdProduct; // Возвращаем созданный продукт
+      .catch((error) => {
+        throw new Error(error.response?.data?.message || 'Failed to create product');
       });
   },
 
@@ -58,12 +54,26 @@ export const api = {
 
 
 
-  renderModel: async (formData: FormData): Promise<Blob> => {
-    const response = await axios.post<Blob>(`https://localhost:7247/api/Image/products/render`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      responseType: 'blob',  // Это говорит Axios, что ответ будет Blob
-    });
-    return response.data; // Теперь тип данных будет точно Blob
-  }
+  renderModel: async (image: File | null, angle: number, lightEnergy: number): Promise<Blob> => {
+    if (!image) throw new Error('Изображение не загружено');
+    
+    const formData = new FormData();
+    formData.append('file', image);
+    formData.append('angle', angle.toString());
+    formData.append('lightEnergy', lightEnergy.toString());
+
+    console.log(`${API_URL}/Image/products/render?angle=${angle}&lightEnergy=${lightEnergy}`)
+    try {
+      // Отправляем POST запрос с FormData
+      const response = await axios.post<Blob>(`${API_URL}/Image/products/render?angle=${angle}&lightEnergy=${lightEnergy}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        responseType: 'blob',  // Говорим, что ответ будет типа Blob
+      });
+      
+      return response.data; // Возвращаем Blob с изображением
+    } catch (error) {
+      throw new Error('Не удалось отрендерить модель');
+    }
+  },
 }
 

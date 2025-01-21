@@ -22,10 +22,11 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
   const [modelType, setModelType] = useState(product?.modelType ?? '');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(product ? api.getImageUrl(product.id) : '');
+  const [renderImage, setRenderImage] = useState<File | null>(null);  // Добавлен новый state для изображения рендера
 
   // Для рендеринга 3D модели
-  const [angle, setAngle] = useState(0);
-  const [lightEnergy, setLightEnergy] = useState(100);
+  const [angle, setAngle] = useState(90);
+  const [lightEnergy, setLightEnergy] = useState(900);
   const [renderedImage, setRenderedImage] = useState<string | null>(null);
 
   const { toast } = useToast();
@@ -71,30 +72,31 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
     }
   };
 
+  const handleRenderImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setRenderImage(file); // Сохраняем файл для рендера
+    }
+  };
+
   const handleRender = async () => {
-    console.log(!image)
-    if (!image) {
-      console.log({ title: "Ошибка", description: "Пожалуйста, загрузите скин", variant: "destructive" });
+    if (!renderImage) {
+      toast({ title: "Ошибка", description: "Пожалуйста, загрузите изображение для рендера", variant: "destructive" });
       return;
     }
-  
-    const formData = new FormData();
-    formData.append('file', image);
-    formData.append('angle', angle.toString());
-    formData.append('lightEnergy', lightEnergy.toString());
-  
+
     try {
-      const imageBlob = await api.renderModel(formData); // Тип imageBlob будет Blob
+      // Передаем изображение для рендера, угол и яркость в запрос
+      const imageBlob = await api.renderModel(renderImage, angle, lightEnergy);
       const imageUrl = URL.createObjectURL(imageBlob); // Создаем URL для Blob
       setRenderedImage(imageUrl); // Устанавливаем изображение для отображения
     } catch (error) {
       toast({ title: "Ошибка", description: "Не удалось отрендерить модель", variant: "destructive" });
     }
-
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 px-1  overflow-y-auto overflow-x-hidden ">
       <div className="space-y-2">
         <Label htmlFor="name">Название</Label>
         <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full" />
@@ -113,22 +115,74 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
         <Label htmlFor="modelType">Тип упаковки</Label>
         <Combobox options={packageTypes} value={modelType} onChange={setModelType} />
       </div>
+      
+      {/* Заголовок для изображения */}
       <div className="space-y-2">
         <Label htmlFor="image">Изображение</Label>
         <div className="flex items-center space-x-4">
-          <div className="relative w-32 h-32">
+          {/* Превью изображения с уменьшенными размерами */}
+          <div className="relative w-24 h-24">
             <img
               src={imagePreview || '/placeholder.svg'}
               alt="Product image"
               className="w-full h-full object-cover rounded-md"
             />
           </div>
+
+          {/* Инпут для загрузки файла изображения */}
           <Label htmlFor="image-upload" className="cursor-pointer">
             <div className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
               <Upload className="w-4 h-4" />
-              <span>Загрузить изображение</span>
+              <span>Загрузить</span>
             </div>
             <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          </Label>
+        </div>
+      </div>
+
+
+      <div className="flex justify-around space-x-4">
+        <div className="flex space-x-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Отмена
+          </Button>
+          {onDelete && (
+            <Button type="button" variant="destructive" onClick={onDelete}>
+              <Trash2 className="mr-2 h-4 w-4" />
+              Удалить
+            </Button>
+          )}
+        </div>
+        <Button type="submit" className="bg-green-600 hover:bg-green-700">
+          <Save className="mr-2 h-4 w-4" />
+          Сохранить
+        </Button>
+      </div>
+
+      {/* Новый инпут для загрузки изображения для рендеринга */}
+      <div className="space-y-2">
+        <Label htmlFor="render-image">Изображение для рендеринга</Label>
+        <div className="flex items-center space-x-4">
+          {/* Превью изображения для рендера */}
+          <div className="relative w-24 h-24">
+            {renderImage ? (
+              <img
+                src={URL.createObjectURL(renderImage)}
+                alt="Render Image"
+                className="w-full h-full object-cover rounded-md"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-300 rounded-md flex items-center justify-center">Нет изображения</div>
+            )}
+          </div>
+
+          {/* Инпут для загрузки изображения для рендеринга */}
+          <Label htmlFor="render-image-upload" className="cursor-pointer">
+            <div className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+              <Upload className="w-4 h-4" />
+              <span>Загрузить</span>
+            </div>
+            <Input id="render-image-upload" type="file" accept="image/*" onChange={handleRenderImageUpload} className="hidden" />
           </Label>
         </div>
       </div>
@@ -154,23 +208,7 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
         />
       </div>
 
-      <div className="flex justify-between space-x-4">
-        <div className="flex space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Отмена
-          </Button>
-          {onDelete && (
-            <Button type="button" variant="destructive" onClick={onDelete}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Удалить
-            </Button>
-          )}
-        </div>
-        <Button type="submit" className="bg-green-600 hover:bg-green-700">
-          <Save className="mr-2 h-4 w-4" />
-          Сохранить изменения
-        </Button>
-      </div>
+      
 
       {renderedImage && (
         <div className="mt-6">

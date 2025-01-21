@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import {Product, ProductCreate, packageTypes } from '../lib/types';
+import { ProductCreate, packageTypes } from '../lib/types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Save, Upload } from 'lucide-react';
-import { api } from '../lib/api';
 import { Combobox } from './ui/combobox';
 
 interface CreateProductFormProps {
-  onSubmit: (product: Product) => Promise<void>;
+  onSubmit: (product: ProductCreate) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -26,17 +25,11 @@ export function CreateProductForm({ onSubmit, onCancel }: CreateProductFormProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const productData: ProductCreate = { name, description, modelType, image };
+    
     try {
-      // Отправляем запрос на создание товара
-      const newProduct = await api.createProduct(productData);
-
-      // Передаем данные с полем imageUrl в родительскую компоненту
-      onSubmit(newProduct); // Отправляем новый товар в родительский компонент
-
-      onCancel()
-
-      console.log('create')
-
+      // Передаем данные в родительский компонент для дальнейшей обработки
+      await onSubmit(productData);  // Родительский компонент будет отправлять данные в API
+      onCancel();
       toast({ title: 'Товар создан', description: 'Новый товар успешно добавлен.' });
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось создать товар.', variant: 'destructive' });

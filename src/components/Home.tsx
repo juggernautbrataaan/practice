@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';  
+import { useState, useEffect } from 'react';
 import { ProductCard } from './ProductCard';
 import { ProductForm } from './ProductForm';
 import { CreateProductForm } from './CreateProductForm';
@@ -91,10 +91,9 @@ export function Home() {
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold text-gray-900">Каталог товаров</h1>
-        <Button onClick={() => setIsCreating(true)} className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-          <Plus className="w-5 h-5 mr-2" />
-          Добавить товар
+        <h1 className="text-2xl font-bold mb-4">Каталог товаров</h1>
+        <Button  onClick={() => setIsCreating(true)}>
+          <Plus/>Добавить товар
         </Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -109,13 +108,13 @@ export function Home() {
 
       {selectedProduct && (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent  className="sm:max-w-md max-h-screen overflow-y-auto">
-            <SheetHeader>
+          <SheetContent className="sm:max-w-md max-h-screen overflow-y-auto">
+            {/* <SheetHeader>
               <SheetTitle className="text-xl font-semibold text-gray-800">Редактирование товара</SheetTitle>
               <SheetDescription className="text-sm text-gray-600">
                 Измените детали товара или удалите его
               </SheetDescription>
-            </SheetHeader>
+            </SheetHeader> */}
             <ProductForm
               product={selectedProduct}
               onSubmit={handleUpdateProduct}
@@ -130,7 +129,7 @@ export function Home() {
         <Sheet open={isCreating} onOpenChange={setIsCreating}>
           <SheetContent className="max-w-md max-h-screen overflow-y-auto rounded-lg shadow-lg">
             <SheetHeader>
-              <SheetTitle className="text-2xl font-semibold text-blue-600">Создание нового товара</SheetTitle>
+              <SheetTitle className="text-2xl mb-1 font-semibold">Создание нового товара</SheetTitle>
             </SheetHeader>
             <CreateProductForm onSubmit={handleCreateProduct} onCancel={() => setIsCreating(false)} />
           </SheetContent>

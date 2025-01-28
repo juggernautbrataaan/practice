@@ -19,13 +19,13 @@ export function CreateProductForm({ onSubmit, onCancel }: CreateProductFormProps
   const [modelType, setModelType] = useState(packageTypes[0].value);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState('');
-  
+
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const productData: ProductCreate = { name, description, modelType, image };
-    
+
     try {
       // Передаем данные в родительский компонент для дальнейшей обработки
       await onSubmit(productData);  // Родительский компонент будет отправлять данные в API
@@ -66,12 +66,12 @@ export function CreateProductForm({ onSubmit, onCancel }: CreateProductFormProps
       </div>
       <div className="space-y-2">
         <Label>Тип упаковки</Label>
-        <Combobox options={packageTypes} value={modelType} onChange={setModelType} />
+        <Combobox options={packageTypes} value={modelType} onValueChange={setModelType} placeholder="Тип упаковки"/>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="image">Изображение</Label>
+        {/* <Label htmlFor="image">Изображение</Label> */}
         <div className="flex items-center space-x-4">
-          <div className="relative w-32 h-32">
+          {/* <div className="relative w-32 h-32">
             <img
               src={imagePreview || '/placeholder.svg'}
               alt="Product preview"
@@ -83,15 +83,19 @@ export function CreateProductForm({ onSubmit, onCancel }: CreateProductFormProps
               <Upload className="w-4 h-4" />
               <span>Загрузить изображение</span>
             </div>
-            <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-          </Label>
+            <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} />
+          </Label> */}
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="picture">Изображение</Label>
+            <Input id="picture" type="file" accept="image/*" onChange={handleImageUpload} />
+          </div>
         </div>
       </div>
       <div className="flex justify-between space-x-4">
         <Button type="button" variant="outline" onClick={onCancel}>
           Отмена
         </Button>
-        <Button type="submit" className="bg-green-600 hover:bg-green-700">
+        <Button type="submit" >
           <Save className="mr-2 h-4 w-4" />
           Создать товар
         </Button>

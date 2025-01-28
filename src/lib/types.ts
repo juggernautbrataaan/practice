@@ -23,5 +23,6 @@ export interface Product {
   
   export const packageTypes = [
     { label: 'Пакет', value: 'Пакет' },
-    { label: 'Банка', value: 'Банка' }
+    { label: 'Банка_110г', value: 'Банка_110г' },
+    { label: 'Банка_80г', value: 'Банка_80г' }
   ]

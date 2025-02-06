@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ProductCard } from './ProductCard';
 import { ProductForm } from './ProductForm';
 import { CreateProductForm } from './CreateProductForm';
@@ -60,6 +60,8 @@ export function Home() {
     }
   };
 
+  console.log('home page render')
+
   const handleUpdateProduct = (updatedProduct: Product) => {
     setProducts((prevProducts) =>
       prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
@@ -87,6 +89,15 @@ export function Home() {
       }
     }
   };
+  const productCards = useMemo(() => {
+    return products.map((product) => (
+      <ProductCard
+        key={product.id}
+        product={product}
+        onClick={() => handleProductClick(product)}
+      />
+    ));
+  }, [products]);
 
   return (
     <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
@@ -97,13 +108,14 @@ export function Home() {
         </Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {/* {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
             onClick={() => handleProductClick(product)}
           />
-        ))}
+        ))} */}
+        {productCards}
       </div>
 
       {selectedProduct && (
@@ -129,7 +141,7 @@ export function Home() {
         <Sheet open={isCreating} onOpenChange={setIsCreating}>
           <SheetContent className="max-w-md max-h-screen overflow-y-auto rounded-lg shadow-lg">
             <SheetHeader>
-              <SheetTitle className="text-2xl mb-1 font-semibold">Создание нового товара</SheetTitle>
+              <SheetTitle className="text-2xl font-bold mb-4">Создание нового товара</SheetTitle>
             </SheetHeader>
             <CreateProductForm onSubmit={handleCreateProduct} onCancel={() => setIsCreating(false)} />
           </SheetContent>

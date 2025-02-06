@@ -8,6 +8,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Save, Upload, Trash2, UserPen } from 'lucide-react';
 import { api } from '../lib/api';
 import { Combobox } from './ui/combobox';
+import { Card, CardContent } from "@/components/ui/card"
+import { ProductBasicInfo } from './ProductBasicInfo';
+import { ProductImage } from './ProductImage';
+import { RenderSettings } from './RenderSettings';
 
 interface ProductFormProps {
   product: Product | null;
@@ -22,10 +26,10 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
   const [modelType, setModelType] = useState(product?.modelType ?? '');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(product ? api.getImageUrl(product.id) : '');
-  const [renderImage, setRenderImage] = useState<File | null>(null);  // Добавлен новый state для изображения рендера
+  // const [renderImage, setRenderImage] = useState<File | null>(null);  // Добавлен новый state для изображения рендера
 
   // Для рендеринга 3D модели
-  const [angle, setAngle] = useState(90);
+  const [angle, setAngle] = useState(0);
   const [lightEnergy, setLightEnergy] = useState(0);
   const [renderedImage, setRenderedImage] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false)
@@ -43,17 +47,17 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
       setImagePreview(api.getImageUrl(product.id)); // Обновляем превью с URL
     }
   }, [product]);
- 
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!product) {
       return; // Если продукт не существует, ничего не делаем
     }
-  
+
     const updatedProduct = { name, description, modelType, image };
-  
+
     try {
       // Передаем id и объект продукта как отдельные аргументы
       await api.updateProduct(product.id, updatedProduct);
@@ -76,21 +80,14 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
     }
   };
 
-  const handleRenderImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setRenderImage(file); // Сохраняем файл для рендера
-    }
-  };
-
   const handleRender = async () => {
     if (!product) {
       toast({ title: "Ошибка", description: "Товар не найден", variant: "destructive" });
       return;
     }
-  
+
     setIsRendering(true); // Устанавливаем состояние загрузки в true
-  
+
     try {
       // Передаем id товара, угол и яркость в запрос
       const imageBlob = await api.renderModel(product.id, angle, lightEnergy);
@@ -102,82 +99,63 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
       setIsRendering(false); // Завершаем процесс рендеринга
     }
   };
-  
+
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 px-1 overflow-y-auto overflow-x-hidden">
+    <form onSubmit={handleSubmit} className="space-y-6 px-2 overflow-y-auto overflow-x-hidden">
       {/* Секция изменения информации о товаре */}
       <div className="space-y-6">
-        <h2 className="text-lg font-bold border-b pb-2">Изменение информации о товаре</h2>
-        <div className="space-y-2">
-          <Label htmlFor="name">Название</Label>
-          <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required className="w-full" />
+        <div className='flex justify-between'>
+          <h2 className="text-2xl font-bold mb-4">Товар</h2>
+          <div className="flex justify-between space-x-4">
+            <Button type="submit" >
+              <Save />
+              Сохранить
+            </Button>
+            <Button type="button" variant="destructive" onClick={onDelete}>
+              <Trash2 />
+            </Button>
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="description">Описание</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="w-full min-h-[100px]"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="modelType">Тип упаковки</Label>
-          <Combobox options={packageTypes} value={modelType} onValueChange={setModelType} placeholder="Тип упаковки" />
-        </div>
-        <div className="space-y-2">
-          {/* <Label htmlFor="image">Изображение</Label> */}
-          <div className="flex items-center space-x-4">
-            <div className="relative w-24 h-24">
-              <img
-                src={imagePreview || '/placeholder.svg'}
-                alt="Product image"
-                className="w-full h-full object-cover rounded-md"
-              />
+        <div className='flex'>
+          <div>
+            <div>
+              <ProductBasicInfo {...{ name, description, modelType, setName, setDescription, setModelType }} />
             </div>
-            <Label htmlFor="image-upload" className="cursor-pointer">
-              <div className="flex items-center space-x-2 bg-black text-white px-4 py-2 rounded-md hover:bg-primary/90">
-                <Upload className="w-4 h-4" />
-                <span>Загрузить</span>
+          </div>
+          <div className="space-y-2">
+
+            <div className="flex items-center space-x-4">
+              <div
+                className="w-full h-40 cursor-pointer flex items-center justify-center"
+                onClick={() => document.getElementById('image-upload')?.click()}
+              >
+                <Card className="w-full h-full flex items-center justify-center rounded">
+                  <CardContent className="w-full h-full flex items-center justify-center p-4">
+
+                    <img
+                      src={imagePreview}
+                      alt="Product"
+                      className="max-w-full max-h-full object-contain rounded"
+                    />
+
+                    <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </CardContent>
+                </Card>
               </div>
-              <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-            </Label>
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="picture">Изображение</Label>
-              <Input id="picture" type="file" accept="image/*" onChange={handleImageUpload} />
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Общие действия */}
-      <div className="flex justify-between space-x-4">
 
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Отмена
-        </Button>
-
-        <Button type="button" variant="destructive" onClick={onDelete}>
-          <Trash2 />
-          Удалить
-        </Button>
-
-        <Button type="submit" >
-          <Save />
-          Сохранить
-        </Button>
-      </div>
       {/* Секция редактирования рендера */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-bold border-b pb-2">Редактирование рендера товара</h2>
+      {/* <div className="space-y-6">
+        <h2 className="text-lg font-bold border-b pb-2">Рендеринг товара</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="picture">Изображение</Label>
-              <Input id="picture" type="file" accept="image/*" onChange={handleRenderImageUpload} />
-            </div> */}
+
 
             <div className="space-y-2">
               <Label htmlFor="angle">Угол поворота</Label>
@@ -186,11 +164,11 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
                 type="number"
                 value={angle}
                 onChange={(e) => setAngle(Number(e.target.value))}
-                min={0}
+                min={-360}
                 max={360}
               />
             </div>
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="lightEnergy">Яркость света</Label>
               <Input
                 id="lightEnergy"
@@ -200,8 +178,8 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
                 min={0}
                 max={1000}
               />
-            </div> */}
-            <Button type="button" onClick={handleRender}  className="w-full">
+            </div>
+            <Button type="button" onClick={handleRender} className="w-full">
               Рендерить модель
             </Button>
           </div>
@@ -214,7 +192,9 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
             )}
           </div>
         </div>
-      </div>
+      </div> */}
+      <RenderSettings {...{ angle, lightEnergy, setAngle, setLightEnergy, handleRender, isRendering, renderedImage, setIsFullScreen }} />
+
       {isFullScreen && renderedImage && (
         <div
           className="fixed inset-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -229,9 +209,6 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
           />
         </div>
       )}
-
-
-
     </form>
   );
 

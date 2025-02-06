@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Product } from '../lib/types';
 import { Button } from './ui/button';
 import { HeartIcon, PlusIcon } from 'lucide-react';
@@ -9,7 +10,7 @@ interface ProductCardProps {
   onClick: () => void;
 }
 
-export function ProductCard({ product, onClick }: ProductCardProps) {
+const ProductCard = memo(({ product, onClick }: ProductCardProps) => {
   return (
     <Card className="w-[300px] group relative space-y-4 overflow-hidden">
       <figure className="group-hover:opacity-90">
@@ -44,4 +45,9 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
       </CardFooter>
     </Card>
   );
-}
+});
+
+// Добавление displayName для лучшего дебаггинга
+ProductCard.displayName = "ProductCard";
+
+export { ProductCard };

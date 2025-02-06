@@ -55,10 +55,15 @@ export const api = {
 
   // Рендер модели
   renderModel: async (id: number, angle: number, lightEnergy: number): Promise<Blob> => {
+    console.log()
     const response = await axios.put(`${IMAGE_API_URL}/${id}/render`, null, {
       params: { angle, lightEnergy },
       responseType: 'blob',
     });
+    console.log(`${IMAGE_API_URL}/${id}/render`, null, {
+      params: { angle, lightEnergy },
+      responseType: 'blob',
+    })
     return response.data;
   },
 

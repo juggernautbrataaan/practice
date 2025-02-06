@@ -54,44 +54,24 @@ export const api = {
   },
 
   // Рендер модели
-  renderModel: async (id: number, angle: number, lightEnergy: number): Promise<Blob> => {
-    console.log()
-    const response = await axios.put(`${IMAGE_API_URL}/${id}/render`, null, {
-      params: { angle, lightEnergy },
+  renderModel: async (
+    id: number,
+    angle_horizontal: number,
+    angle_vertical: number,
+    lightEnergy: number
+  ): Promise<Blob> => {
+    console.log(`${IMAGE_API_URL}/${id}/render`, {
+      params: { angle_horizontal, angle_vertical, lightEnergy },
       responseType: 'blob',
     });
-    console.log(`${IMAGE_API_URL}/${id}/render`, null, {
-      params: { angle, lightEnergy },
+  
+    const response = await axios.put(`${IMAGE_API_URL}/${id}/render`, null, {
+      params: { angle_horizontal, angle_vertical, lightEnergy },
       responseType: 'blob',
-    })
+    });
+  
     return response.data;
   },
 
-  // Получение всех моделей
-  // getAllModels: async (): Promise<Model[]> => {
-  //   const response = await axios.get(`${IMAGE_API_URL}/models`);
-  //   return response.data;
-  // },
-
-  // // Добавление модели
-  // addModel: async (modelType: string, file: File): Promise<void> => {
-  //   const formData = new FormData();
-  //   formData.append('modeltype', modelType);
-  //   formData.append('Blender_file', file);
-
-  //   await axios.post(`${IMAGE_API_URL}/model`, formData, {
-  //     headers: { 'Content-Type': 'multipart/form-data' },
-  //   });
-  // },
-
-  // // Удаление модели
-  // deleteModel: async (id: number): Promise<void> => {
-  //   await axios.delete(`${IMAGE_API_URL}/${id}/model`);
-  // },
-
-  // // Получение всех рендеров
-  // getAllRenders: async (): Promise<RenderResponse[]> => {
-  //   const response = await axios.get(`${IMAGE_API_URL}/renders`);
-  //   return response.data;
-  // },
+  
 };

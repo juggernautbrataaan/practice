@@ -1,41 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Product, packageTypes } from '../lib/types';
+import { Product } from '../lib/types';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Upload, Trash2, UserPen } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
-import { Combobox } from './ui/combobox';
-import { Card, CardContent } from "@/components/ui/card"
 import { ProductBasicInfo } from './ProductBasicInfo';
-import { ProductImage } from './ProductImage';
 import { RenderSettings } from './RenderSettings';
+import { ProductImage } from './ProductImage';
+
+
 
 interface ProductFormProps {
   product: Product | null;
   onSubmit: (product: Product) => void;
-  onCancel: () => void;
   onDelete?: () => void;
 }
 
-export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFormProps) {
+export function ProductForm({ product, onSubmit,  onDelete }: ProductFormProps) {
   const [name, setName] = useState(product?.name ?? '');
   const [description, setDescription] = useState(product?.description ?? '');
   const [modelType, setModelType] = useState(product?.modelType ?? '');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(product ? api.getImageUrl(product.id) : '');
-  // const [renderImage, setRenderImage] = useState<File | null>(null);  // Добавлен новый state для изображения рендера
-
-  // Для рендеринга 3D модели
-  const [angle, setAngle] = useState(0);
-  const [lightEnergy, setLightEnergy] = useState(0);
-  const [renderedImage, setRenderedImage] = useState<string | null>(null);
-  const [isFullScreen, setIsFullScreen] = useState(false)
-  // Состояние для отслеживания процесса рендеринга
-  const [isRendering, setIsRendering] = useState(false);
-
   const { toast } = useToast();
 
   // Обновление imagePreview, если product изменился
@@ -47,7 +33,6 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
       setImagePreview(api.getImageUrl(product.id)); // Обновляем превью с URL
     }
   }, [product]);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,136 +65,25 @@ export function ProductForm({ product, onSubmit, onCancel, onDelete }: ProductFo
     }
   };
 
-  const handleRender = async () => {
-    if (!product) {
-      toast({ title: "Ошибка", description: "Товар не найден", variant: "destructive" });
-      return;
-    }
-
-    setIsRendering(true); // Устанавливаем состояние загрузки в true
-
-    try {
-      // Передаем id товара, угол и яркость в запрос
-      const imageBlob = await api.renderModel(product.id, angle, lightEnergy);
-      const imageUrl = URL.createObjectURL(imageBlob); // Создаем URL для Blob
-      setRenderedImage(imageUrl); // Устанавливаем изображение для отображения
-    } catch (error) {
-      toast({ title: "Ошибка", description: "Не удалось отрендерить модель", variant: "destructive" });
-    } finally {
-      setIsRendering(false); // Завершаем процесс рендеринга
-    }
-  };
-
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 px-2 overflow-y-auto overflow-x-hidden">
-      {/* Секция изменения информации о товаре */}
-      <div className="space-y-6">
-        <div className='flex justify-between'>
-          <h2 className="text-2xl font-bold mb-4">Товар</h2>
-          <div className="flex justify-between space-x-4">
-            <Button type="submit" >
-              <Save />
-              Сохранить
-            </Button>
-            <Button type="button" variant="destructive" onClick={onDelete}>
-              <Trash2 />
-            </Button>
-          </div>
-        </div>
-        <div className='flex'>
-          <div>
-            <div>
-              <ProductBasicInfo {...{ name, description, modelType, setName, setDescription, setModelType }} />
-            </div>
-          </div>
-          <div className="space-y-2">
-
-            <div className="flex items-center space-x-4">
-              <div
-                className="w-full h-40 cursor-pointer flex items-center justify-center"
-                onClick={() => document.getElementById('image-upload')?.click()}
-              >
-                <Card className="w-full h-full flex items-center justify-center rounded">
-                  <CardContent className="w-full h-full flex items-center justify-center p-4">
-
-                    <img
-                      src={imagePreview}
-                      alt="Product"
-                      className="max-w-full max-h-full object-contain rounded"
-                    />
-
-                    <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-8 px-2">
+      <div className="flex justify-between items-center mb-6 mr-2">
+        <h2 className="text-2xl font-bold mb-4">Товар</h2>
+        <div className="space-x-2">
+          <Button type="submit" >
+            <Save />
+            Сохранить
+          </Button>
+          <Button type="button" variant="destructive" onClick={onDelete}>
+            <Trash2 />
+          </Button>
         </div>
       </div>
-
-      {/* Общие действия */}
-
-      {/* Секция редактирования рендера */}
-      {/* <div className="space-y-6">
-        <h2 className="text-lg font-bold border-b pb-2">Рендеринг товара</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-
-
-            <div className="space-y-2">
-              <Label htmlFor="angle">Угол поворота</Label>
-              <Input
-                id="angle"
-                type="number"
-                value={angle}
-                onChange={(e) => setAngle(Number(e.target.value))}
-                min={-360}
-                max={360}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lightEnergy">Яркость света</Label>
-              <Input
-                id="lightEnergy"
-                type="number"
-                value={lightEnergy}
-                onChange={(e) => setLightEnergy(Number(e.target.value))}
-                min={0}
-                max={1000}
-              />
-            </div>
-            <Button type="button" onClick={handleRender} className="w-full">
-              Рендерить модель
-            </Button>
-          </div>
-          <div className="flex items-center justify-center">
-            {isRendering ? (
-              <div className="w-16 h-16 relative">
-                <div className="absolute inset-0 rounded-full animate-spin border-4 border-t-blue-600 border-solid"></div>              </div>
-            ) : (
-              renderedImage && <img src={renderedImage} alt="Rendered Model" onClick={() => setIsFullScreen(true)} className="max-w-full max-h-[300px] object-contain cursor-pointer" />
-            )}
-          </div>
-        </div>
-      </div> */}
-      <RenderSettings {...{ angle, lightEnergy, setAngle, setLightEnergy, handleRender, isRendering, renderedImage, setIsFullScreen }} />
-
-      {isFullScreen && renderedImage && (
-        <div
-          className="fixed inset-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center z-50"
-          style={{ margin: 0 }} // Убирает внешние отступы
-          onClick={() => setIsFullScreen(false)}
-        >
-          <img
-            src={renderedImage || "/placeholder.svg"}
-            alt="Full Screen Rendered Model"
-            className="max-w-[90%] max-h-[80vh] object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <ProductBasicInfo {...{ name, description, modelType, setName, setDescription, setModelType }} />
+        <ProductImage {...{ imagePreview, handleImageUpload }} />
+      </div>
+      {product && <RenderSettings productId={product.id} />}
     </form>
   );
-
 }

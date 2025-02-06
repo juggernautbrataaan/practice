@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import { Product } from '../lib/types';
 import { Button } from './ui/button';
-import { HeartIcon, PlusIcon } from 'lucide-react';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { api } from '@/lib/api'
 

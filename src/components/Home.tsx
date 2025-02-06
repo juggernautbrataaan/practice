@@ -4,7 +4,7 @@ import { ProductForm } from './ProductForm';
 import { CreateProductForm } from './CreateProductForm';
 import { Product, ProductCreate } from '../lib/types';
 import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
 import { Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -120,17 +120,11 @@ export function Home() {
 
       {selectedProduct && (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent className="sm:max-w-md max-h-screen overflow-y-auto">
-            {/* <SheetHeader>
-              <SheetTitle className="text-xl font-semibold text-gray-800">Редактирование товара</SheetTitle>
-              <SheetDescription className="text-sm text-gray-600">
-                Измените детали товара или удалите его
-              </SheetDescription>
-            </SheetHeader> */}
+<SheetContent side="right" className="sm:max-w-xl max-h-screen overflow-y-auto w-[95vw]">            
             <ProductForm
               product={selectedProduct}
               onSubmit={handleUpdateProduct}
-              onCancel={() => setIsSheetOpen(false)}
+              // onCancel={() => setIsSheetOpen(false)}
               onDelete={handleDeleteProduct}
             />
           </SheetContent>

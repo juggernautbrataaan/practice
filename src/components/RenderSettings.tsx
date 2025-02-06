@@ -49,7 +49,7 @@ export function RenderSettings({ productId }: RenderSettingsProps) {
           <Slider
             id="horizontalAngle"
             min={0}
-            max={360}
+            max={288}
             step={1}
             value={[horizontalAngle]}
             onValueChange={(value) => setHorizontalAngle(value[0])}
@@ -61,8 +61,8 @@ export function RenderSettings({ productId }: RenderSettingsProps) {
           <Label htmlFor="verticalAngle">Вертикальный угол</Label>
           <Slider
             id="verticalAngle"
-            min={0}
-            max={360}
+            min={-180}
+            max={180}
             step={1}
             value={[verticalAngle]}
             onValueChange={(value) => setVerticalAngle(value[0])}
@@ -75,7 +75,7 @@ export function RenderSettings({ productId }: RenderSettingsProps) {
           <Slider
             id="lightEnergy"
             min={0}
-            max={1000}
+            max={160}
             step={1}
             value={[lightEnergy]}
             onValueChange={(value) => setLightEnergy(value[0])}

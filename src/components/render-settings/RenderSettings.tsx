@@ -65,7 +65,7 @@ export function RenderSettings({ productId }: RenderSettingsProps) {
           onHorizontalAngleChange={setHorizontalAngle}
           onVerticalAngleChange={setVerticalAngle}
           onLightEnergyChange={setLightEnergy}
-          onLightAhgleChange={setLightAngle}
+          onLightAngleChange={setLightAngle}
         />
 
         <div className="flex items-center justify-center ">

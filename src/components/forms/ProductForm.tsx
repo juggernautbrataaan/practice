@@ -7,6 +7,9 @@ import { RenderSettings } from '../render-settings/RenderSettings';
 import { ProductImage } from '../product/ProductImage';
 import { ActionButtons } from '../ui/action-buttons';
 import { Separator } from "@/components/ui/separator"
+import { useProducts } from '@/hooks/useProducts';
+
+
 
 interface ProductFormProps {
   product: Product | null;
@@ -15,6 +18,8 @@ interface ProductFormProps {
   onClose: () => void;
 }
 
+
+
 export function ProductForm({ product, onSubmit, onDelete, onClose }: ProductFormProps) {
   const [name, setName] = useState(product?.name ?? '');
   const [description, setDescription] = useState(product?.description ?? '');
@@ -22,6 +27,13 @@ export function ProductForm({ product, onSubmit, onDelete, onClose }: ProductFor
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(product ? api.getImageUrl(product.id) : '');
   const { toast } = useToast();
+
+
+  console.log(name)
+  // const {
+    
+  //   deleteProduct,
+  // } = useProducts();
 
   // Обновление imagePreview, если product изменился
   useEffect(() => {
@@ -33,6 +45,8 @@ export function ProductForm({ product, onSubmit, onDelete, onClose }: ProductFor
     }
   }, [product]);
 
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product) return;
@@ -43,7 +57,8 @@ export function ProductForm({ product, onSubmit, onDelete, onClose }: ProductFor
       const freshProduct = await api.getProductById(product.id);
       await onSubmit(freshProduct);
       onClose(); // Закрываем форму после успешного сохранения
-    } catch (error) {
+    } 
+    catch (error) {
       toast({ 
         title: 'Ошибка', 
         description: 'Не удалось сохранить товар.', 
@@ -51,6 +66,9 @@ export function ProductForm({ product, onSubmit, onDelete, onClose }: ProductFor
       });
     }
   };
+
+ 
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

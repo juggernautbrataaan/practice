@@ -1,27 +1,39 @@
-
-import { RenderControl } from "./renderConrol"
+import { useState } from "react";
+import { RenderControl } from "./renderConrol";
 
 interface RenderControlsProps {
-  horizontalAngle: number;
-  verticalAngle: number;
-  lightEnergy: number;
-  lightAngle: number;
-  onHorizontalAngleChange: (value: number) => void;
-  onVerticalAngleChange: (value: number) => void;
-  onLightEnergyChange: (value: number) => void;
-  onLightAngleChange: (value: number) => void;
+  onSettingsChange: (settings: {
+    horizontalAngle: number;
+    verticalAngle: number;
+    lightEnergy: number;
+    lightAngle: number;
+  }) => void;
 }
 
-export function RenderControls({
-  horizontalAngle,
-  verticalAngle,
-  lightEnergy,
-  lightAngle,
-  onHorizontalAngleChange,
-  onVerticalAngleChange,
-  onLightEnergyChange,
-  onLightAngleChange,
-}: RenderControlsProps) {
+export function RenderControls({ onSettingsChange }: RenderControlsProps) {
+  const [horizontalAngle, setHorizontalAngle] = useState(0);
+  const [verticalAngle, setVerticalAngle] = useState(0);
+  const [lightEnergy, setLightEnergy] = useState(50);
+  const [lightAngle, setLightAngle] = useState(0);
+
+  // Обновление настроек при каждом изменении
+  const handleChange = (key: string, value: number) => {
+    const newSettings = {
+      horizontalAngle,
+      verticalAngle,
+      lightEnergy,
+      lightAngle,
+      [key]: value, // обновляем только изменённое значение
+    };
+
+    if (key === "horizontalAngle") setHorizontalAngle(value);
+    if (key === "verticalAngle") setVerticalAngle(value);
+    if (key === "lightEnergy") setLightEnergy(value);
+    if (key === "lightAngle") setLightAngle(value);
+
+    onSettingsChange(newSettings);
+  };
+
   return (
     <div className="space-y-4">
       <RenderControl
@@ -31,7 +43,7 @@ export function RenderControls({
         min={-90}
         max={90}
         unit="°"
-        onChange={onHorizontalAngleChange}
+        onChange={(value) => handleChange("horizontalAngle", value)}
       />
       <RenderControl
         id="verticalAngle"
@@ -40,7 +52,7 @@ export function RenderControls({
         min={-90}
         max={90}
         unit="°"
-        onChange={onVerticalAngleChange}
+        onChange={(value) => handleChange("verticalAngle", value)}
       />
       <RenderControl
         id="lightEnergy"
@@ -49,7 +61,7 @@ export function RenderControls({
         min={0}
         max={100}
         unit="%"
-        onChange={onLightEnergyChange}
+        onChange={(value) => handleChange("lightEnergy", value)}
       />
       <RenderControl
         id="lightAngle"
@@ -58,8 +70,8 @@ export function RenderControls({
         min={-180}
         max={180}
         unit="°"
-        onChange={onLightAngleChange}
+        onChange={(value) => handleChange("lightAngle", value)}
       />
     </div>
   );
-} 
+}

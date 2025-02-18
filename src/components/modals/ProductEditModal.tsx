@@ -10,6 +10,7 @@ interface ProductEditModalProps {
   onDelete: () => void;
 }
 
+
 export function ProductEditModal({
   product,
   isOpen,
@@ -17,6 +18,10 @@ export function ProductEditModal({
   onUpdate,
   onDelete,
 }: ProductEditModalProps) {
+
+
+  console.log(product.id)
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="sm:max-w-xl max-h-screen overflow-y-auto w-[95vw]">

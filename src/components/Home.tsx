@@ -40,7 +40,7 @@ export function Home() {
     }
   };
 
-  console.log(window.innerWidth)
+  // console.log(window.innerWidth)
   const productCards = useMemo(() => {
     return products.map((product) => (
 

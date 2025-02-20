@@ -17,8 +17,7 @@ export interface Product {
     name: string
     description: string
     modelType: string
-    image: File | null
-    
+    image: File | null  
   }
   
   export const packageTypes = [

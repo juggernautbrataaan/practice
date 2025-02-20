@@ -1,6 +1,6 @@
-import { Product } from '../../lib/types';
-import { Sheet, SheetContent } from '../ui/sheet';
-import { ProductForm } from '../forms/ProductForm';
+import { Product } from '@/lib/types';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { ProductForm } from '@/components/forms/ProductForm';
 
 interface ProductEditModalProps {
   product: Product;

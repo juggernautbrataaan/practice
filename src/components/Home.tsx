@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ProductCard } from './product/ProductCard';
-import { Product } from '../lib/types';
-import { useProducts } from '../hooks/useProducts';
-import { ProductEditModal } from './modals/ProductEditModal';
-import { ProductCreateModal } from './modals/ProductCreateModal';
-import { SearchPanel } from './SearchPanel';
+import { ProductCard } from '@/components/product/ProductCard';
+import { Product } from '@/lib/types';
+import { useProducts } from '@/hooks/useProducts';
+import { ProductEditModal } from '@/components/modals/ProductEditModal';
+import { ProductCreateModal } from '@/components/modals/ProductCreateModal';
+import { SearchPanel } from '@/components/SearchPanel';
 
 export function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -25,6 +25,8 @@ export function Home() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);

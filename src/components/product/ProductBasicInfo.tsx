@@ -1,8 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Combobox } from '@/components/ui/combobox';
-import { packageTypes } from '@/lib/types';
 import { Label } from '@/components/ui/label';
+import { ModelSelect } from '@/components/model-settings/ModelSelect'
 
 interface ProductBasicInfoProps {
   productInfo: {
@@ -20,33 +19,37 @@ export function ProductBasicInfo({ productInfo, setProductInfo }: ProductBasicIn
     <div className="space-y-4">
       <div className="grid gap-2">
         <Label htmlFor="name">Название продукта</Label>
-        <Input 
-          id="name" 
-          value={name} 
-          onChange={(e) => setProductInfo({ ...productInfo, name: e.target.value })} 
-          required 
+        <Input
+          id="name"
+          value={name}
+          onChange={(e) => setProductInfo({ ...productInfo, name: e.target.value })}
+          required
         />
       </div>
 
+
+
       <div className="grid gap-2">
         <Label htmlFor="description">Описание продукта</Label>
-        <Textarea 
-          id="description" 
-          value={description} 
-          onChange={(e) => setProductInfo({ ...productInfo, description: e.target.value })} 
-          required 
-          className="min-h-[100px]" 
+        <Textarea
+          id="description"
+          value={description}
+          onChange={(e) => setProductInfo({ ...productInfo, description: e.target.value })}
+          required
+          className="min-h-[100px]"
         />
       </div>
 
       <div className="grid gap-2">
         <Label htmlFor="model-type">Тип упаковки</Label>
-        <Combobox 
-          options={packageTypes} 
-          value={modelType} 
-          onValueChange={(value) => setProductInfo({ ...productInfo, modelType: value })} 
-          placeholder="Тип упаковки" 
-        />
+        <div className="w-full max-w-[100%]"> {/* Ограничиваем ширину */}
+          <ModelSelect
+            value={modelType || ""}
+            onChange={(value) => setProductInfo({ ...productInfo, modelType: value })}
+            placeholder="Тип упаковки"
+            
+          />
+        </div>
       </div>
     </div>
   );

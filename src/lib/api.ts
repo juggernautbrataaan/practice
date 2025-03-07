@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { Product, ProductCreate,  } from '@/lib/types';
+import { BlenderModel } from "@/lib/types"
 
-const API_URL = 'https://localhost:7247/api/products';
-const IMAGE_API_URL = 'https://localhost:7247/api/products';
+
+const API_URL = 'http://localhost:5000/api/products';
+const IMAGE_API_URL = 'http://localhost:5000/api/products';
+
 
 export const api = {
   // Получение всех продуктов
@@ -78,5 +81,38 @@ export const api = {
     return response.data;
   },
 
+  getAllModels: async (): Promise<BlenderModel[]> => {
+    const response = await axios.get(`${API_URL}/models`);
+    return response.data ;
+  },
+
+  // Добавление новой модели
+  addModel: async (modelTypeName: string, blenderFile: File, isGlb: boolean): Promise<void> => {
+    const formData = new FormData();
+    formData.append("modelTypeName", modelTypeName);
+    formData.append("Blender_file", blenderFile);
+    formData.append("isGlb", isGlb.toString());
+
+    await axios.post(`${API_URL}/model/?isGlb=${isGlb}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  // Обновление модели
+  updateModel: async (id: number, modelTypeName: string, blenderFile?: File, isGlb?: boolean): Promise<void> => {
+    const formData = new FormData();
+    formData.append("modelTypeName", modelTypeName);
+    if (blenderFile) formData.append("Blender_file", blenderFile);
+    if (isGlb !== undefined) formData.append("isGlb", isGlb.toString());
+
+    await axios.patch(`${API_URL}/model/${id}?isGlb=${isGlb}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  // Удаление модели
+  deleteModel: async (id: number): Promise<void> => {
+    await axios.delete(`${API_URL}/${id}/model`);
+  },
   
 };

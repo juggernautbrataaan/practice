@@ -1,6 +1,5 @@
 import { Button } from "./button";
 import { Save, MoreVertical } from "lucide-react";
-import { useProducts } from '@/hooks/useProducts';
 import {
   DropdownMenu,
   DropdownMenuContent,

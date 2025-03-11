@@ -4,7 +4,7 @@ import { BlenderModel } from "@/lib/types"
 
 
 const API_URL = 'http://localhost:5000/api/products';
-const IMAGE_API_URL = 'http://localhost:5000/api/products';
+
 
 
 export const api = {
@@ -68,12 +68,9 @@ export const api = {
     lightEnergy: number,
     angle_light: number,
   ): Promise<Blob> => {
-    console.log(`${IMAGE_API_URL}/${id}/render`, {
-      params: { angle_horizontal, angle_vertical, lightEnergy, angle_light },
-      responseType: 'blob',
-    });
+
   
-    const response = await axios.put(`${IMAGE_API_URL}/${id}/render`, null, {
+    const response = await axios.put(`${API_URL}/${id}/render`, null, {
       params: { angle_horizontal, angle_vertical, lightEnergy, angle_light },
       responseType: 'blob',
     });

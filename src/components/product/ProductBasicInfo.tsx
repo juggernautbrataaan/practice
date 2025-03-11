@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Combobox } from '@/components/ui/combobox';
 import { ModelSelect } from '@/components/model-settings/ModelSelect'
 
 interface ProductBasicInfoProps {
@@ -14,7 +15,7 @@ interface ProductBasicInfoProps {
 
 export function ProductBasicInfo({ productInfo, setProductInfo }: ProductBasicInfoProps) {
   const { name, description, modelType } = productInfo;
-
+  
   return (
     <div className="space-y-4">
       <div className="grid gap-2">
@@ -40,16 +41,18 @@ export function ProductBasicInfo({ productInfo, setProductInfo }: ProductBasicIn
         />
       </div>
 
-      <div className="grid gap-2">
+
+
+      <div className="grid gap-2 w-full">
         <Label htmlFor="model-type">Тип упаковки</Label>
-        <div className="w-full max-w-[100%]"> {/* Ограничиваем ширину */}
+        
           <ModelSelect
             value={modelType || ""}
             onChange={(value) => setProductInfo({ ...productInfo, modelType: value })}
             placeholder="Тип упаковки"
-            
+           
           />
-        </div>
+        
       </div>
     </div>
   );

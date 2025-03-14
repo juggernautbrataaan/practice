@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState } from "react";
 import { Check, ChevronsUpDown, MoreVertical, Pencil, Trash, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -71,7 +70,7 @@ export function ModelSwitcher({
 
   return (
     <>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} >
         <PopoverTrigger asChild>
           <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between overflow-hidden">
             <div className="flex items-center truncate max-w-[calc(100%-20px)] overflow-hidden">
@@ -91,12 +90,12 @@ export function ModelSwitcher({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent  className="w-full p-0">
-          <Command>
+        <PopoverContent side="bottom" className="w-full p-0 max-h-[50vh] ">
+        <Command>
             <CommandInput placeholder={placeholder} />
             <CommandList>
               <CommandEmpty>Модели не найдены</CommandEmpty>
-              <CommandGroup>
+              <CommandGroup className="overflow-y-auto max-h-60 sm:max-h-64">
                 {models.map((model) => (
                   <CommandItem
                     key={model.id}
